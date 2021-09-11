@@ -12,7 +12,7 @@
 .hero {
   max-width: 600px;
 
-  p:first-child {
+  > span {
     font-size: 1.5rem;
     font-weight: 700;
     line-height: 2.125rem;
@@ -30,7 +30,7 @@
     }
   }
 
-  p:last-child {
+  p {
     font-size: 1.5rem;
     line-height: 2.25rem;
     margin-top: 1.5rem;
@@ -39,5 +39,9 @@
       color: var(--cyan-500);
       font-weight: 700;
     }
+  }
+
+  button {
+    margin-top: 2.5rem;
   }
 }
