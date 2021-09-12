@@ -35,6 +35,9 @@ This project was developed with the technologies above:
 - [React](https://reactjs.org)
 - [TypeScript](https://www.typescriptlang.org)
 - [NextJS](https://nextjs.org)
+- [Stripe](https://stripe.com)
+- [Sass](https://sass-lang.com)
+- [react-Icons](https://react-icons.github.io/react-icons)
 
 ## 🔖 Layout
 
