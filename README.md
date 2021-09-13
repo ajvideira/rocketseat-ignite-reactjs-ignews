@@ -38,6 +38,7 @@ This project was developed with the technologies above:
 - [Stripe](https://stripe.com)
 - [Sass](https://sass-lang.com)
 - [react-icons](https://react-icons.github.io/react-icons)
+- [NextAuth](https://next-auth.js.org)
 
 ## 🔖 Layout
 
