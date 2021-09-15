@@ -13,6 +13,10 @@ export default NextAuth({
       scope: ['read:user'],
     }),
   ],
+  jwt: {
+    secret: process.env.NEXTAUTH_JWT_SECRET,
+    signingKey: process.env.NEXTAUTH_JWT_SIGNINGKEY,
+  },
   callbacks: {
     signIn: async (user, account, profile) => {
       try {
