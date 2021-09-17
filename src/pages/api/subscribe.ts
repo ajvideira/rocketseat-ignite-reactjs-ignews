@@ -1,6 +1,19 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/client";
+import { query as q } from "faunadb";
+
+import { fauna } from "../../services/faunadb";
 import { stripe } from "../../services/stripe";
+
+type User = {
+  ref: {
+    id: string;
+  };
+  data: {
+    email: string;
+    stripe_customer_id: string;
+  };
+};
 
 export default async function subscribe(
   request: NextApiRequest,
@@ -21,12 +34,31 @@ export default async function subscribe(
       .end("Method Not Allowed");
   }
 
-  const stripeCustomer = await stripe.customers.create({
-    email: session.user.email,
-  });
+  const user = await fauna.query<User>(
+    q.Get(q.Match(q.Index("user_by_email"), q.Casefold(session.user.email)))
+  );
+
+  let stripeCustomerId = null;
+
+  if (user.data.stripe_customer_id) {
+    stripeCustomerId = user.data.stripe_customer_id;
+  } else {
+    const stripeCustomer = await stripe.customers.create({
+      email: session.user.email,
+    });
+    stripeCustomerId = stripeCustomer.id;
+  }
+
+  await fauna.query(
+    q.Update(q.Ref(q.Collection("users"), user.ref.id), {
+      data: {
+        stripe_customer_id: stripeCustomerId,
+      },
+    })
+  );
 
   const checkoutSession = await stripe.checkout.sessions.create({
-    customer: stripeCustomer.id,
+    customer: stripeCustomerId,
     success_url: `${process.env.NEXTAUTH_URL}/posts`,
     cancel_url: `${process.env.NEXTAUTH_URL}`,
     allow_promotion_codes: true,
