@@ -16,14 +16,34 @@ export async function saveSubscription(
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
+  const subscriptionData = {
+    stripe_subscription_id: subscription.id,
+    stripe_status: subscription.status,
+    stripe_price_id: subscription.items.data[0].price.id,
+    user_ref: userRef,
+  };
+
   await fauna.query(
-    q.Create(q.Collection("subscriptions"), {
-      data: {
-        stripe_subscription_id: subscription.id,
-        stripe_status: subscription.status,
-        stripe_price_id: subscription.items.data[0].price.id,
-        user_ref: userRef,
-      },
-    })
+    q.If(
+      q.Exists(
+        q.Match(
+          q.Index("subscription_by_stripe_subscription_id"),
+          subscriptionId
+        )
+      ),
+      q.Replace(
+        q.Select(
+          "ref",
+          q.Get(
+            q.Match(
+              q.Index("subscription_by_stripe_subscription_id"),
+              subscriptionId
+            )
+          )
+        ),
+        { data: subscriptionData }
+      ),
+      q.Create(q.Collection("subscriptions"), { data: subscriptionData })
+    )
   );
 }

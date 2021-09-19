@@ -34,6 +34,15 @@ export default async function webhooks(
     );
 
     switch (event.type) {
+      case "customer.subscription.created":
+      case "customer.subscription.updated":
+      case "customer.subscription.deleted":
+        const subscription = event.data.object as Stripe.Subscription;
+        await saveSubscription(
+          subscription.id,
+          subscription.customer.toString()
+        );
+        break;
       case "checkout.session.completed":
         const sessionCheckout = event.data.object as Stripe.Checkout.Session;
         await saveSubscription(
