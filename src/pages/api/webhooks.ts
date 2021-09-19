@@ -2,9 +2,8 @@ import { buffer } from "micro";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
+import { saveSubscription } from "../../lib/manageSubstription";
 import { stripe } from "../../services/stripe";
-
-const relevantEvents = new Set(["checkout.session.completed"]);
 
 export const config = {
   api: {
@@ -27,21 +26,25 @@ export default async function webhooks(
 
   const stripeSignature = req.headers["stripe-signature"];
 
-  let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(
+    const event = stripe.webhooks.constructEvent(
       bufferedRequest.toString(),
       stripeSignature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+
+    switch (event.type) {
+      case "checkout.session.completed":
+        const sessionCheckout = event.data.object as Stripe.Checkout.Session;
+        await saveSubscription(
+          sessionCheckout.subscription.toString(),
+          sessionCheckout.customer.toString()
+        );
+        break;
+    }
+    return res.json({ received: true });
   } catch (error) {
     console.log(error);
     return res.status(400).end(`Webhook error: ${error.message}`);
   }
-
-  if (relevantEvents.has(event.type)) {
-    console.log("Evento recebido", event);
-  }
-
-  return res.json({ received: true });
 }
