@@ -39,6 +39,9 @@ This project was developed with the technologies above:
 - [Sass](https://sass-lang.com)
 - [react-icons](https://react-icons.github.io/react-icons)
 - [NextAuth](https://next-auth.js.org)
+- [React-icons](https://react-icons.github.io/react-icons)
+- [FaunaDB](https://www.fauna.com)
+- [Prismic CMS](https://prismic.io)
 
 ## 🔖 Layout
 
@@ -47,6 +50,7 @@ You can view the project layout through [this link](https://www.figma.com/file/t
 ## 🚀 How to execute
 
 - Clone the repository
+- Configure environment variables
 - Install de dependencies with `yarn`
 - Run the application with `yarn dev`
 - Access [`localhost:3000`](http://localhost:3000) in your browser
