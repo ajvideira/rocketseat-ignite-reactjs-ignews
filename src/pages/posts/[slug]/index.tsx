@@ -8,11 +8,11 @@ import { getPrismicClient } from "../../../services/prismic";
 
 import styles from "./styles.module.scss";
 
-type PostsPageProps = {
+type PostPageProps = {
   post: Post;
 };
 
-export default function PostPage({ post }: PostsPageProps) {
+export default function PostPage({ post }: PostPageProps) {
   return (
     <>
       <Head>
@@ -32,14 +32,21 @@ export default function PostPage({ post }: PostsPageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<PostsPageProps> = async ({
+export const getServerSideProps: GetServerSideProps<PostPageProps> = async ({
   req,
   params,
 }) => {
   const session = await getSession({ req });
 
-  if (!session) {
-    null;
+  console.log(session);
+
+  if (!session?.activeSubscription) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   const { slug } = params;
