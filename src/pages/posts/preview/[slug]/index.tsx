@@ -1,26 +1,27 @@
-import { GetServerSideProps } from "next";
-import { getSession, useSession } from "next-auth/client";
+import { GetStaticPaths, GetStaticProps } from "next";
+import Link from "next/link";
+import { useSession } from "next-auth/client";
 import { useRouter } from "next/dist/client/router";
 import Head from "next/head";
 import { RichText } from "prismic-dom";
-import { useEffect } from "react";
 
-import { Post } from "../../../models";
-import { getPrismicClient } from "../../../services/prismic";
+import { Post } from "../../../../models";
+import { getPrismicClient } from "../../../../services/prismic";
 
 import styles from "./styles.module.scss";
+import { useEffect } from "react";
 
-type PostPageProps = {
+type PostPreviewPageProps = {
   post: Post;
 };
 
-export default function PostPage({ post }: PostPageProps) {
+export default function PostPreviewPage({ post }: PostPreviewPageProps) {
   const [session] = useSession();
   const router = useRouter();
 
   useEffect(() => {
-    if (!session?.activeSubscription) {
-      router.push(`/posts/preview/${post.slug}`);
+    if (session?.activeSubscription) {
+      router.push(`/posts/${post.slug}`);
       return;
     }
   }, [session, post, router]);
@@ -35,37 +36,34 @@ export default function PostPage({ post }: PostPageProps) {
           <h1>{post.title}</h1>
           <time>{post.createdAt}</time>
           <div
-            className={styles.content}
+            className={`${styles.content} ${styles.previewContent}`}
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
+          <div className={styles.continueReading}>
+            Wanna continue reading?&nbsp;
+            <Link href="/">
+              <a title="Subscribe now">Subscribe now 🤗</a>
+            </Link>
+          </div>
         </article>
       </main>
     </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps<PostPageProps> = async ({
-  req,
+export const getStaticPaths: GetStaticPaths = () => {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps: GetStaticProps<PostPreviewPageProps> = async ({
   params,
 }) => {
-  const session = await getSession({ req });
-
-  if (!session?.activeSubscription) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
   const { slug } = params;
 
-  const response = await getPrismicClient(req).getByUID(
-    "post",
-    String(slug),
-    {}
-  );
+  const response = await getPrismicClient().getByUID("post", String(slug), {});
 
   if (!response) {
     return {
@@ -81,7 +79,7 @@ export const getServerSideProps: GetServerSideProps<PostPageProps> = async ({
       post: {
         slug: response.uid,
         title: RichText.asText(response.data.title),
-        content: RichText.asHtml(response.data.content),
+        content: RichText.asHtml(response.data.content.splice(0, 3)),
         createdAt: new Date(response.first_publication_date).toLocaleString(
           "pt-BR",
           {

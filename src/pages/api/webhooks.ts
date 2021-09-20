@@ -53,7 +53,6 @@ export default async function webhooks(
     }
     return res.json({ received: true });
   } catch (error) {
-    console.log(error);
     return res.status(400).end(`Webhook error: ${error.message}`);
   }
 }
