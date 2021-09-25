@@ -23,10 +23,10 @@ ig.news is a platform to share you text content through subscribe. This is the t
 
 ## :hammer_and_wrench: Features
 
-- [ ] Integration with Github OAuth
-- [ ] Integration with Stripe
-- [ ] List, add, edit and remove posts
-- [ ] Control who can read the posts
+- [x] Social login with Github OAuth
+- [x] Managing payments with Stripe
+- [x] Managing users and subscribes with FaunaDB
+- [x] Managing posts content with Prismic CMS
 
 ## ✨ Technologies
 
@@ -50,6 +50,9 @@ You can view the project layout through [this link](https://www.figma.com/file/t
 ## 🚀 How to execute
 
 - Clone the repository
+- Create a new repository on [Prismic](https://prismic.io)
+- Create a new database on [FaunaDB](https://www.fauna.com)
+- Create a new account on [Stripe](https://stripe.com)
 - Configure environment variables
 - Install de dependencies with `yarn`
 - Run the application with `yarn dev`
