@@ -20,6 +20,7 @@ export default async function subscribe(
   response: NextApiResponse
 ) {
   const session = await getSession({ req: request });
+  console.log(session);
 
   if (!session?.user) {
     return response.status(401).json({
@@ -28,10 +29,8 @@ export default async function subscribe(
   }
 
   if (request.method !== "POST") {
-    return response
-      .setHeader("Allow", ["POST"])
-      .status(405)
-      .end("Method Not Allowed");
+    response.setHeader("Allow", ["POST"]);
+    return response.status(405).end("Method Not Allowed");
   }
 
   const user = await fauna.query<User>(
