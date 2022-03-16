@@ -1,13 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { SignInButton } from ".";
-import { mocked } from "ts-jest/utils";
 import { useSession } from "next-auth/client";
 
 jest.mock("next-auth/client");
 
 describe("SigninButton Component", () => {
   it("should renders correctly when not authenticated", () => {
-    const useSessionMocked = mocked(useSession);
+    const useSessionMocked = jest.mocked(useSession);
 
     useSessionMocked.mockReturnValueOnce([null, false]);
 
@@ -17,7 +16,7 @@ describe("SigninButton Component", () => {
   });
 
   it("should renders correctly when authenticated", () => {
-    const useSessionMocked = mocked(useSession);
+    const useSessionMocked = jest.mocked(useSession);
 
     useSessionMocked.mockReturnValueOnce([
       {
