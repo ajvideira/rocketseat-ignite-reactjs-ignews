@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getSession, useSession } from "next-auth/client";
-import { useRouter } from "next/dist/client/router";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import { RichText } from "prismic-dom";
 import { useEffect } from "react";
