@@ -20,7 +20,7 @@ export default NextAuth({
   callbacks: {
     session: async (session) => {
       try {
-        /*  const activeSubscription = await fauna.query(
+        const activeSubscription = await fauna.query(
           q.Get(
             q.Intersection([
               q.Match(
@@ -38,8 +38,7 @@ export default NextAuth({
               q.Match(q.Index("subscription_by_stripe_status"), "active"),
             ])
           )
-        );*/
-        const activeSubscription = null;
+        );
 
         return {
           ...session,
@@ -51,7 +50,7 @@ export default NextAuth({
     },
     signIn: async (user, account, profile) => {
       try {
-        /*await fauna.query(
+        await fauna.query(
           q.If(
             q.Not(
               q.Exists(
@@ -66,7 +65,7 @@ export default NextAuth({
             }),
             q.Get(q.Match(q.Index("user_by_email"), q.Casefold(user.email)))
           )
-        );*/
+        );
 
         return true;
       } catch {
